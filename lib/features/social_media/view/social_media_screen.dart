@@ -10,12 +10,27 @@ class SocialMediaScreen extends StatefulWidget {
 }
 
 class _SocialMediaScreenState extends State<SocialMediaScreen> {
+  double iconSize = 35;
+  Color iconColor = AppColor.lightBlue;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sosyal Medya', style: context.textTheme.titleLarge),
-      ),
+          title: Text(
+            'Sosyal Medya',
+            style: context.textTheme.titleLarge,
+          ),
+          actions: <Widget>[
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.add_box_outlined,
+                color: iconColor,
+                size: iconSize*.9,
+              ),
+            )
+          ]),
       body: ListView.builder(
         itemCount: 5,
         itemBuilder: (context, index) {
@@ -30,7 +45,7 @@ class _SocialMediaScreenState extends State<SocialMediaScreen> {
       width: context.width,
       height: context.veryhighValue6x,
       child: Card(
-        color: const Color.fromARGB(0, 255, 255, 255),
+        color: AppColor.black,
         margin: const EdgeInsets.only(bottom: 10),
         child: Column(
           children: [
@@ -53,8 +68,6 @@ class _SocialMediaScreenState extends State<SocialMediaScreen> {
   }
 
   Row _itemBottom() {
-    double iconSize = 35;
-    Color iconColor = AppColor.lightBlue;
     return Row(
       children: [
         IconButton(
@@ -93,7 +106,6 @@ class _SocialMediaScreenState extends State<SocialMediaScreen> {
 
   Widget _itemHeader(BuildContext context) {
     Color iconColor = AppColor.lightBlue;
-
     return Padding(
         padding: context.paddingAllLow,
         child: Column(

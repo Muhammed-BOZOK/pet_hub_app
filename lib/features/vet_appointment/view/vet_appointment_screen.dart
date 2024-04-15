@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
+import 'package:pet_friend_hub_app/config/items/app_color.dart';
 import 'package:pet_friend_hub_app/features/vet_appointment/view/vet_detail.dart';
 
 class VetAppointmentScreen extends StatelessWidget {
@@ -9,7 +10,15 @@ class VetAppointmentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('Kliik Seçimi',
+        style: context.textTheme.titleLarge,),
+        actions: [
+          IconButton(onPressed: () {
+            
+          }, icon: const Icon(Icons.filter_list_rounded, color: AppColor.lightBlue, size: 30,))
+        ],
+      ),
       body: Padding(
         padding: context.paddingAllDefault,
         child: ListView.builder(

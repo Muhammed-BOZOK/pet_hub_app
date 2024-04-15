@@ -6,4 +6,5 @@ class AppColor {
   static const lightBlue = Color(0xFF66ccff);
   static const orange = Color(0xFFff9900);
   static Color? greenColor = const Color.fromARGB(255, 17, 105, 63);
+  static Color? black = const Color.fromARGB(0, 255, 255, 255);
 }
