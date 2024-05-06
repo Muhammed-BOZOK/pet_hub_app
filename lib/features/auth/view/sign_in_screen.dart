@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
-import 'package:pet_friend_hub_app/features/auth/view/sign_up_screen.dart';
-import 'package:pet_friend_hub_app/features/auth/widgets/texfield_widget.dart';
-import 'package:pet_friend_hub_app/widgets/elevated_button_widget.dart';
+import 'package:pet_friend_hub_app/config/routes/route_name.dart';
+import 'package:pet_friend_hub_app/models/data/user_model.dart';
+
+import '../../../widgets/elevated_button_widget.dart';
+import '../controller/auth_controller.dart';
+import '../widgets/circle_avatar_widget.dart';
+import '../widgets/google_btn_view_widget.dart';
+import '../widgets/texfield_widget.dart';
+import '../widgets/title_widget.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -15,6 +21,16 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   bool isObscureText = true;
+  final String screenTitle = 'HOŞ GELDİNİZ';
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,26 +44,35 @@ class _SignInScreenState extends State<SignInScreen> {
       padding: context.paddingHorizontalDefault,
       child: SingleChildScrollView(
         child: SizedBox(
-          height: context.dynamicHeight(0.80),
+          height: context.dynamicHeight(0.9),
           child: Column(
             children: [
-              Expanded(
-                flex: 3,
-                child: CircleAvatar(
-                  radius: context.dynamicWidth(0.2),
+              const Expanded(
+                flex: 25,
+                child: CircleAvatarWidget(
+                  icon: Icons.person_2_outlined,
                 ),
               ),
               Expanded(
-                flex: 2,
-                child: Column(
-                  children: [
-                    _buildEmailForm(),
-                    _buildPasswordForm(),
-                  ],
+                flex: 10,
+                child: TileWidget(
+                  text: screenTitle,
                 ),
               ),
               Expanded(
-                flex: 2,
+                flex: 30,
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      _buildEmailForm(),
+                      _buildPasswordForm(),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 35,
                 child: _buildBtnBox(context),
               )
             ],
@@ -61,51 +86,77 @@ class _SignInScreenState extends State<SignInScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        CustomElevatedButton(
-          text: 'Giriş Yap',
-          borderRadius: 50,
-          buttonColor: AppColor.orange,
-          textColor: AppColor.whiteColor,
-          onPressed: () {},
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Hesabınız yok mu ?",
-              style: context.textTheme.bodyLarge?.copyWith(
-                color: AppColor.whiteColor,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                PersistentNavBarNavigator.pushDynamicScreen(
-                  context,
-                  screen: MaterialPageRoute(
-                      builder: (context) => const SignUpScreen()),
-                );
+        Consumer(
+          builder: (context, ref, child) {
+            return CustomElevatedButton(
+              text: 'Giriş Yap',
+              borderRadius: 50,
+              buttonColor: AppColor.orange,
+              textColor: AppColor.whiteColor,
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  UserModel user = UserModel(
+                      email: emailController.text,
+                      password: passwordController.text);
+
+                  ref
+                      .read(authContreollerProvider)
+                      .signInWithEmailAndPassword(userModel: user)
+                      .then((value) => Navigator.pushNamed(
+                          context, AppRouteNames.home));
+                }
+
+                // PersistentNavBarNavigator.pushNewScreen(
+                //   context,
+                //   screen: ProfileScreen(),
+                // );
               },
-              child: Text(
-                " Kayıt Ol",
+            );
+          },
+        ),
+        const GoogleBtnViewWidget(),
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Hesabınız yok mu ?",
                 style: context.textTheme.bodyLarge?.copyWith(
-                  color: AppColor.greenColor,
+                  color: AppColor.whiteColor,
                 ),
               ),
-            ),
-          ],
-        )
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, AppRouteNames.signUp);
+                },
+                child: Text(
+                  " Kayıt Ol",
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: AppColor.greenColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
   TextFromFieldWidget _buildEmailForm() {
-    return const TextFromFieldWidget(
+    return TextFromFieldWidget(
+      hintText: 'E-mail',
+      controller: emailController,
       formPreIcon: Icons.person,
     );
   }
 
   TextFromFieldWidget _buildPasswordForm() {
     return TextFromFieldWidget(
+      hintText: 'Password',
+      controller: passwordController,
       formPreIcon: Icons.key,
       suffixIcon: GestureDetector(
         onTap: () {

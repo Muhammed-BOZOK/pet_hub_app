@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"pet-friend-hub","appId":"1:519928826311:android:50a2fd36c09ecbaef3f1e2","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"pet-friend-hub","configurations":{"android":"1:519928826311:android:50a2fd36c09ecbaef3f1e2","ios":"1:519928826311:ios:0515441460a168c2f3f1e2"}}}}}}

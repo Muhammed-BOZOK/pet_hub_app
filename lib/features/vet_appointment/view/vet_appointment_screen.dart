@@ -11,16 +11,22 @@ class VetAppointmentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Kliik Seçimi',
-        style: context.textTheme.titleLarge,),
+        title: Text(
+          'Klinik Seçimi',
+          style: context.textTheme.titleLarge,
+        ),
         actions: [
-          IconButton(onPressed: () {
-            
-          }, icon: const Icon(Icons.filter_list_rounded, color: AppColor.lightBlue, size: 30,))
+          IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.filter_list_rounded,
+                color: AppColor.lightBlue,
+                size: 30,
+              ))
         ],
       ),
       body: Padding(
-        padding: context.paddingAllDefault,
+        padding: context.paddingHorizontalDefault,
         child: ListView.builder(
           itemCount: 5,
           itemBuilder: (context, index) {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
+import 'package:pet_friend_hub_app/features/social_media/controller/posts_controller.dart';
+import 'package:pet_friend_hub_app/features/social_media/view/camera_screen.dart';
 
 class SocialMediaScreen extends StatefulWidget {
   const SocialMediaScreen({super.key});
@@ -16,21 +18,7 @@ class _SocialMediaScreenState extends State<SocialMediaScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          title: Text(
-            'Sosyal Medya',
-            style: context.textTheme.titleLarge,
-          ),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.add_box_outlined,
-                color: iconColor,
-                size: iconSize*.9,
-              ),
-            )
-          ]),
+      appBar: _buildAppBar(context),
       body: ListView.builder(
         itemCount: 5,
         itemBuilder: (context, index) {
@@ -38,6 +26,82 @@ class _SocialMediaScreenState extends State<SocialMediaScreen> {
         },
       ),
     );
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+        title: Text(
+          'Sosyal Medya',
+          style: context.textTheme.titleLarge,
+        ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              _viewShowDialog(context);
+            },
+            icon: Icon(
+              Icons.add_box_outlined,
+              color: iconColor,
+              size: iconSize * .9,
+            ),
+          )
+        ]);
+  }
+
+  Future<dynamic> _viewShowDialog(BuildContext context) {
+    final textStyle = context.textTheme.bodyMedium;
+    return showModalBottomSheet(
+        backgroundColor: Colors.black,
+        context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                onTap: () async {
+                  debugPrint('Galeri');
+                  final navigator = Navigator.of(context);
+                  navigator.pop();
+                  final selectedImage =
+                      await PostsController().pickImageFromGaallery();
+                  if (selectedImage != null) {
+                    navigator.push(MaterialPageRoute(
+                      builder: (context) => PostsScreen(
+                        selectedImage: selectedImage,
+                      ),
+                    ));
+                  }
+                },
+                leading: const Icon(Icons.photo_outlined),
+                title: Text(
+                  'Fotograf Seç',
+                  style: textStyle,
+                ),
+              ),
+              ListTile(
+                onTap: () async {
+                  debugPrint('Kamera');
+                  final navigator = Navigator.of(context);
+                  navigator.pop();
+                  final selectedImage =
+                      await PostsController().pickImageFromCamera();
+                  if (selectedImage != null) {
+                    navigator.push(MaterialPageRoute(
+                      builder: (context) => PostsScreen(
+                        selectedImage: selectedImage,
+                      ),
+                    ));
+                  }
+                },
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: Text(
+                  'Fotograf Çek',
+                  style: textStyle,
+                ),
+              )
+            ],
+          );
+        });
   }
 
   SizedBox _buildItem(BuildContext context) {

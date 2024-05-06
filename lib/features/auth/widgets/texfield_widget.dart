@@ -5,20 +5,31 @@ import 'package:pet_friend_hub_app/config/items/app_color.dart';
 class TextFromFieldWidget extends StatelessWidget {
   const TextFromFieldWidget({
     super.key,
+    required this.hintText,
+    this.controller,
     this.obscureText = false,
     this.formPreIcon,
     this.suffixIcon,
   });
 
   final bool obscureText;
+  final String hintText;
   final IconData? formPreIcon;
   final Widget? suffixIcon;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: context.dynamicHeight(0.01)),
       child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return '$hintText zorunlu alandır.';
+          }
+          return null;
+        },
+        controller: controller,
         obscureText: obscureText,
         keyboardType: TextInputType.emailAddress,
         decoration: _getDecoration(context),
@@ -43,7 +54,7 @@ class TextFromFieldWidget extends StatelessWidget {
       prefixIconColor: iconColor,
       filled: true,
       fillColor: AppColor.orange,
-      hintText: 'E-mail',
+      hintText: hintText,
       hintStyle: const TextStyle(
         color: AppColor.whiteColor,
       ),
