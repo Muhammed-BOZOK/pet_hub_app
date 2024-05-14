@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pet_friend_hub_app/config/routes/route_name.dart';
-import 'package:pet_friend_hub_app/features/auth/view/profile_screen.dart';
+import 'package:pet_friend_hub_app/features/profile/view/profile_screen.dart';
 import 'package:pet_friend_hub_app/features/auth/view/sign_in_screen.dart';
 import 'package:pet_friend_hub_app/features/auth/view/sign_up_screen.dart';
 import 'package:pet_friend_hub_app/features/chat/view/chat_screen.dart';

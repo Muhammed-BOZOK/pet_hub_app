@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../auth/view/profile_screen.dart';
+import '../../profile/view/profile_screen.dart';
 import '../../chat/view/chat_screen.dart';
 import '../../social_media/view/social_media_screen.dart';
 import '../../vet_appointment/view/vet_appointment_screen.dart';

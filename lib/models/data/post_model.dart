@@ -1,39 +1,53 @@
 import 'comment_model.dart';
 
-class Post {
+class PostModel {
   String? postId;
   String? userId;
+  String? userName;
   DateTime? timestamp;
-  String? content;
-  int? likes;
-  List<Comment>? comments;
+  String? description;
+  String? postImageUrl;
+  String? likes;
+  List<CommentModel>? comments;
 
-  Post({
+  PostModel({
     this.postId,
     this.userId,
+    this.userName,
     this.timestamp,
-    this.content,
+    this.description,
+    this.postImageUrl,
     this.likes,
     this.comments,
   });
 
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      postId: json['post_id'],
-      userId: json['user_id'],
+  factory PostModel.fromJson(Map<String, dynamic> json) {
+    return PostModel(
+      postId: json['postId'],
+      userId: json['userId'],
+      userName: json['userName'],
       timestamp: DateTime.parse(json['timestamp']),
-      content: json['content'],
+      description: json['description'],
+      postImageUrl: json['postImageUrl'],
       likes: json['likes'],
-      comments: (json['comments'] as List<dynamic>).map((comment) => Comment.fromJson(comment)).toList(),
+      comments: json['comments'] != null
+          ? (json['comments'] as List)
+              .map((e) => CommentModel.fromJson(e))
+              .toList()
+          : null,
     );
   }
 
-  Map<String, dynamic> toJson() => {
-    'post_id': postId,
-    'user_id': userId,
-    'timestamp': timestamp!.toIso8601String(),
-    'content': content,
-    'likes': likes,
-    'comments': comments!.map((comment) => comment.toJson()).toList(),
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'postId': postId,
+      'userId': userId,
+      'userName': userName,
+      'timestamp': timestamp?.toIso8601String(),
+      'description': description,
+      'postImageUrl': postImageUrl,
+      'likes': likes,
+      'comment': comments?.map((commet) => commet.toJson()).toList(),
+    };
+  }
 }

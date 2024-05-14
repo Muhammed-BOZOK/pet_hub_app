@@ -1,29 +1,26 @@
 import 'dart:io';
 
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../models/data/post_model.dart';
+import '../repository/post_repository.dart';
+
+final postControllerProvider = Provider(
+  (ref) => PostsController(postRepository: ref.watch(postRepositoryPrivder)),
+);
 
 class PostsController {
-  Future<dynamic> pickImageFromGaallery() async {
-    final imageFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+  final PostRepository postRepository;
 
-    if (imageFile == null) return null;
-    final cropedImage = _imageCrop(File(imageFile.path));
-    return cropedImage;
+  PostsController({
+    required this.postRepository,
+  });
+
+  Future<void> setPostToFirestore(PostModel post, File fileName) async {
+    return postRepository.addPostToFirestore(post,fileName);
   }
 
-  Future<dynamic> pickImageFromCamera() async {
-    final imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
-    if (imageFile == null) return;
-    return File(imageFile.path);
-  }
-
-  Future<File?> _imageCrop(File imageFile) async {
-    final CroppedFile? cropedImage = await ImageCropper().cropImage(
-        sourcePath: imageFile.path,
-        aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9));
-    if (cropedImage == null) return null;
-    return File(cropedImage.path);
+  Future<List<PostModel>> getPost() async {
+    return postRepository.getPosts();
   }
 }

@@ -3,8 +3,8 @@ import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
 
 class GoogleBtnViewWidget extends StatelessWidget {
-  const GoogleBtnViewWidget({super.key});
-
+  const GoogleBtnViewWidget({super.key, this.onTap});
+  final void Function()? onTap;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -15,9 +15,7 @@ class GoogleBtnViewWidget extends StatelessWidget {
             child: _viewDivider(),
           ),
           InkWell(
-            onTap: () {
-              debugPrint('Google');
-            },
+            onTap: onTap,
             splashColor: Colors.transparent,
             child: CircleAvatar(
               child: Image.asset('assets/images/google.png'),

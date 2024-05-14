@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
-import 'package:pet_friend_hub_app/features/auth/controller/auth_controller.dart';
-import 'package:pet_friend_hub_app/features/auth/view/sign_in_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -34,25 +31,7 @@ class SettingsScreen extends StatelessWidget {
               () {},
             ),
             const Spacer(),
-            Consumer(
-              builder: (context, ref, child) {
-                return _buildTitle(
-                  context,
-                  'Oturumu Kapat',
-                  () {
-                    ref
-                        .read(authContreollerProvider)
-                        .signOut()
-                        .then((value) => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignInScreen(),
-                              ),
-                            ));
-                  },
-                );
-              },
-            )
+            
           ],
         ),
       ),

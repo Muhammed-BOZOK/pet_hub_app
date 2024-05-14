@@ -1,30 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
+import 'package:pet_friend_hub_app/features/social_media/controller/post_photo_controller.dart';
 import 'package:pet_friend_hub_app/features/social_media/controller/posts_controller.dart';
-import 'package:pet_friend_hub_app/features/social_media/view/camera_screen.dart';
+import 'package:pet_friend_hub_app/features/social_media/view/posts_screen.dart';
+import 'package:pet_friend_hub_app/features/social_media/widgets/post_item_widget.dart';
 
-class SocialMediaScreen extends StatefulWidget {
+class SocialMediaScreen extends ConsumerWidget {
   const SocialMediaScreen({super.key});
 
-  @override
-  State<SocialMediaScreen> createState() => _SocialMediaScreenState();
-}
-
-class _SocialMediaScreenState extends State<SocialMediaScreen> {
-  double iconSize = 35;
-  Color iconColor = AppColor.lightBlue;
+  final double iconSize = 35;
+  final Color iconColor = AppColor.lightBlue;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      body: ListView.builder(
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return _buildItem(context);
-        },
-      ),
+      body: FutureBuilder(
+          future: ref.read(postControllerProvider).getPost(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final posts = snapshot.data;
+              return ListView.builder(
+                itemCount: posts?.length,
+                itemBuilder: (context, index) {
+                  return PostItemWidget(
+                    post: posts![index],
+                    onPressedToAddComment: () {
+                      debugPrint('commen : ${posts[index].postId}');
+                    },
+                  );
+                },
+              );
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              return const Center(child: Text("Error"));
+            }
+          }),
     );
   }
 
@@ -63,14 +78,12 @@ class _SocialMediaScreenState extends State<SocialMediaScreen> {
                   final navigator = Navigator.of(context);
                   navigator.pop();
                   final selectedImage =
-                      await PostsController().pickImageFromGaallery();
-                  if (selectedImage != null) {
-                    navigator.push(MaterialPageRoute(
-                      builder: (context) => PostsScreen(
-                        selectedImage: selectedImage,
-                      ),
-                    ));
-                  }
+                      await PostPhotoController().pickImageFromGaallery();
+                  navigator.push(MaterialPageRoute(
+                    builder: (context) => PostsScreen(
+                      selectedImage: selectedImage,
+                    ),
+                  ));
                 },
                 leading: const Icon(Icons.photo_outlined),
                 title: Text(
@@ -84,7 +97,7 @@ class _SocialMediaScreenState extends State<SocialMediaScreen> {
                   final navigator = Navigator.of(context);
                   navigator.pop();
                   final selectedImage =
-                      await PostsController().pickImageFromCamera();
+                      await PostPhotoController().pickImageFromCamera();
                   if (selectedImage != null) {
                     navigator.push(MaterialPageRoute(
                       builder: (context) => PostsScreen(
@@ -104,112 +117,112 @@ class _SocialMediaScreenState extends State<SocialMediaScreen> {
         });
   }
 
-  SizedBox _buildItem(BuildContext context) {
-    return SizedBox(
-      width: context.width,
-      height: context.veryhighValue6x,
-      child: Card(
-        color: AppColor.black,
-        margin: const EdgeInsets.only(bottom: 10),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 20,
-              child: _itemHeader(context),
-            ),
-            Expanded(
-              flex: 65,
-              child: _itemBody(),
-            ),
-            Expanded(
-              flex: 15,
-              child: _itemBottom(),
-            )
-          ],
-        ),
-      ),
-    );
-  }
+  // SizedBox _buildItem(BuildContext context, PostModel post) {
+  //   return SizedBox(
+  //     width: context.width,
+  //     height: context.veryhighValue6x,
+  //     child: Card(
+  //       color: AppColor.black,
+  //       margin: const EdgeInsets.only(bottom: 10),
+  //       child: Column(
+  //         children: [
+  //           Expanded(
+  //             flex: 20,
+  //             child: _itemHeader(context, post),
+  //           ),
+  //           Expanded(
+  //             flex: 65,
+  //             child: _itemBody(),
+  //           ),
+  //           Expanded(
+  //             flex: 15,
+  //             child: _itemBottom(),
+  //           )
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Row _itemBottom() {
-    return Row(
-      children: [
-        IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.favorite_border_rounded,
-              size: iconSize,
-              color: iconColor,
-            )),
-        IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.chat_bubble_outline_rounded,
-              size: iconSize,
-              color: iconColor,
-            ))
-      ],
-    );
-  }
+  // Row _itemBottom() {
+  //   return Row(
+  //     children: [
+  //       IconButton(
+  //           onPressed: () {},
+  //           icon: Icon(
+  //             Icons.favorite_border_rounded,
+  //             size: iconSize,
+  //             color: iconColor,
+  //           )),
+  //       IconButton(
+  //           onPressed: () {},
+  //           icon: Icon(
+  //             Icons.chat_bubble_outline_rounded,
+  //             size: iconSize,
+  //             color: iconColor,
+  //           ))
+  //     ],
+  //   );
+  // }
 
-  Widget _itemBody() {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              'assets/images/kedi.jpg',
-            ),
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _itemBody() {
+  //   return AspectRatio(
+  //     aspectRatio: 16 / 9,
+  //     child: Container(
+  //       decoration: const BoxDecoration(
+  //         image: DecorationImage(
+  //           image: AssetImage(
+  //             'assets/images/kedi.jpg',
+  //           ),
+  //           fit: BoxFit.cover,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _itemHeader(BuildContext context) {
-    Color iconColor = AppColor.lightBlue;
-    return Padding(
-        padding: context.paddingAllLow,
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const CircleAvatar(
-                      child: Icon(
-                        Icons.person_2_rounded,
-                        color: Colors.black,
-                        size: 40,
-                      ),
-                    ),
-                    Padding(
-                      padding: context.paddingLeftLow,
-                      child: Text(
-                        'User Name',
-                        style: context.textTheme.bodyLarge,
-                      ),
-                    ),
-                  ],
-                ),
-                IconButton(
-                  padding: EdgeInsets.zero,
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.more_vert_rounded,
-                    size: 40,
-                    color: iconColor,
-                  ),
-                ),
-              ],
-            ),
-            const Divider(
-              height: 1,
-            )
-          ],
-        ));
-  }
+  // Widget _itemHeader(BuildContext context, PostModel post) {
+  //   Color iconColor = AppColor.lightBlue;
+  //   return Padding(
+  //       padding: context.paddingAllLow,
+  //       child: Column(
+  //         children: [
+  //           Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Row(
+  //                 children: [
+  //                   const CircleAvatar(
+  //                     child: Icon(
+  //                       Icons.person_2_rounded,
+  //                       color: Colors.black,
+  //                       size: 40,
+  //                     ),
+  //                   ),
+  //                   Padding(
+  //                     padding: context.paddingLeftLow,
+  //                     child: Text(
+  //                       post.content.toString(),
+  //                       style: context.textTheme.bodyLarge,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               IconButton(
+  //                 padding: EdgeInsets.zero,
+  //                 onPressed: () {},
+  //                 icon: Icon(
+  //                   Icons.more_vert_rounded,
+  //                   size: 40,
+  //                   color: iconColor,
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           const Divider(
+  //             height: 1,
+  //           )
+  //         ],
+  //       ));
+  // }
 }

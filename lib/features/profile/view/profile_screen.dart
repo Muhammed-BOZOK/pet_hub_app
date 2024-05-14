@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
 import 'package:pet_friend_hub_app/config/routes/route_name.dart';
+import 'package:pet_friend_hub_app/features/profile/controller/profile_controller.dart';
+import 'package:pet_friend_hub_app/models/data/user_model.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   ProfileScreen({super.key});
   final double headIconSize = 30;
 
@@ -16,13 +19,25 @@ class ProfileScreen extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: _buildBody(context),
+      body: FutureBuilder(
+        future: ref.read(profileControllerProvider).getuser(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final activeUser = snapshot.data;
+            return _buildBody(context, activeUser!);
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return const Center(child: Text("Error"));
+          }
+        },
+      ),
     );
   }
 
-  Widget _buildBody(BuildContext context) {
+  Widget _buildBody(BuildContext context, UserModel user) {
     return SizedBox(
       height: context.height,
       child: Padding(
@@ -31,7 +46,7 @@ class ProfileScreen extends StatelessWidget {
           children: [
             Expanded(
               flex: 25,
-              child: _buildHeader(context),
+              child: _buildHeader(context, user),
             ),
             Expanded(
               flex: 75,
@@ -108,7 +123,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, UserModel user) {
     return Padding(
       padding: context.paddingVerticalLow,
       child: Column(
@@ -140,24 +155,30 @@ class ProfileScreen extends StatelessWidget {
           ),
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 flex: 3,
                 child: CircleAvatar(
                   radius: 40,
-                  child: Icon(Icons.person_2_rounded),
+                  backgroundImage: NetworkImage(user.profilePhoto!),
                 ),
               ),
-              const Spacer(
-                flex: 1,
+              const SizedBox(
+                width: 10,
               ),
               Expanded(
                 flex: 9,
                 child: Column(
                   children: [
-                    _viewText(Alignment.topLeft, 'Muhammed Bozok',
-                        context.textTheme.titleLarge),
-                    _viewText(Alignment.centerRight, 'Hesap Türü: Nromal',
-                        context.textTheme.titleSmall),
+                    _viewText(
+                      Alignment.topLeft,
+                      user.userName!,
+                      context.textTheme.titleLarge,
+                    ),
+                    _viewText(
+                      Alignment.centerRight,
+                      'Hesap Türü: Nromal',
+                      context.textTheme.titleSmall,
+                    ),
                   ],
                 ),
               )

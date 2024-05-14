@@ -14,7 +14,7 @@ class AuthContreoller {
   Future<void> signInWithEmailAndPassword({required UserModel userModel}) {
     return authRepository.signInWithEmailAndPassword(
       email: userModel.email,
-      password: userModel.password,
+      password: userModel.password!,
     );
   }
 
@@ -23,7 +23,7 @@ class AuthContreoller {
     return authRepository.signUpWithEmailAndPassword(userModel: userModel);
   }
 
-  Future<void> signOut() {
-    return authRepository.signOut();
+  Future<void> signInWithGoogle() {
+    return authRepository.signInWithGoogle();
   }
 }

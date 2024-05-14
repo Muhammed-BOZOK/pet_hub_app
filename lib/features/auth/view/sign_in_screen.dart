@@ -44,17 +44,17 @@ class _SignInScreenState extends State<SignInScreen> {
       padding: context.paddingHorizontalDefault,
       child: SingleChildScrollView(
         child: SizedBox(
-          height: context.dynamicHeight(0.9),
+          height: context.height,
           child: Column(
             children: [
               const Expanded(
-                flex: 25,
+                flex: 30,
                 child: CircleAvatarWidget(
                   icon: Icons.person_2_outlined,
                 ),
               ),
               Expanded(
-                flex: 10,
+                flex: 9,
                 child: TileWidget(
                   text: screenTitle,
                 ),
@@ -89,7 +89,7 @@ class _SignInScreenState extends State<SignInScreen> {
         Consumer(
           builder: (context, ref, child) {
             return CustomElevatedButton(
-              text: 'Giriş Yap',
+              btnTitle: 'Giriş Yap',
               borderRadius: 50,
               buttonColor: AppColor.orange,
               textColor: AppColor.whiteColor,
@@ -102,22 +102,27 @@ class _SignInScreenState extends State<SignInScreen> {
                   ref
                       .read(authContreollerProvider)
                       .signInWithEmailAndPassword(userModel: user)
-                      .then((value) => Navigator.pushNamed(
-                          context, AppRouteNames.home));
+                      .then((value) =>
+                          Navigator.pushNamed(context, AppRouteNames.home));
                 }
-
-                // PersistentNavBarNavigator.pushNewScreen(
-                //   context,
-                //   screen: ProfileScreen(),
-                // );
               },
             );
           },
         ),
-        const GoogleBtnViewWidget(),
+        Consumer(
+          builder: (context, ref, child) {
+            return GoogleBtnViewWidget(
+              onTap: () {
+                ref.read(authContreollerProvider).signInWithGoogle().then(
+                    (value) =>
+                        Navigator.pushNamed(context, AppRouteNames.home));
+              },
+            );
+          },
+        ),
         const Spacer(),
         Padding(
-          padding: const EdgeInsets.only(bottom: 10),
+          padding: context.paddingVerticalLow,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -149,7 +154,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return TextFromFieldWidget(
       hintText: 'E-mail',
       controller: emailController,
-      formPreIcon: Icons.person,
+      formPreIcon: Icons.mail_outline,
     );
   }
 

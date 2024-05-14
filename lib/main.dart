@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:firebase_core/firebase_core.dart';
-import 'package:pet_friend_hub_app/config/routes/app_router.dart';
-import 'package:pet_friend_hub_app/config/routes/route_name.dart';
+
 import 'config/items/app_color.dart';
+import 'config/routes/app_router.dart';
+import 'config/routes/route_name.dart';
 import 'constants/color.dart';
 import 'firebase_options.dart';
 
@@ -28,11 +28,8 @@ class MyApp extends StatelessWidget {
         highlightColor: Colors.transparent,
         primaryColor: AppColor.whiteColor,
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          iconTheme: IconThemeData(
-            color: AppColor.whiteColor
-          )
-        ),
+            backgroundColor: Colors.transparent,
+            iconTheme: IconThemeData(color: AppColor.whiteColor)),
         scaffoldBackgroundColor: scaffoldBGColor,
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           type: BottomNavigationBarType.fixed,

@@ -10,6 +10,8 @@ import 'package:pet_friend_hub_app/features/auth/widgets/title_widget.dart';
 import 'package:pet_friend_hub_app/models/data/user_model.dart';
 import 'package:pet_friend_hub_app/widgets/elevated_button_widget.dart';
 
+import '../../../config/routes/route_name.dart';
+
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -19,9 +21,10 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   bool isObscureText = true;
+  TextEditingController userNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  //TextEditingController rpasswordController = TextEditingController();
+  TextEditingController rePasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -33,38 +36,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Padding _buildBody(BuildContext context) {
     return Padding(
-      padding: context.paddingAllDefault,
+      padding: context.paddingHorizontalDefault,
       child: SingleChildScrollView(
+        primary: false,
         child: SizedBox(
-          height: context.dynamicHeight(0.89),
+          height: context.height,
           child: Column(
             children: [
               const Expanded(
-                flex: 25,
+                flex: 3,
                 child:
                     CircleAvatarWidget(icon: Icons.person_add_alt_1_outlined),
               ),
               const Expanded(
-                flex: 10,
+                flex: 1,
                 child: TileWidget(
                   text: 'KAYIT OL',
                 ),
               ),
               Expanded(
-                flex: 30,
+                flex: 4,
                 child: Form(
                   key: _formKey,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      _buildEmailForm(),
+                      _buildFirstNameForm(userNameController),
+                      _buildEmailForm(emailController),
                       _buildPasswordForm(passwordController),
-                      //_buildPasswordForm(rpasswordController),
                     ],
                   ),
                 ),
               ),
               Expanded(
-                flex: 30,
+                flex: 3,
                 child: _buildBtnBox(context),
               )
             ],
@@ -81,19 +86,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         Consumer(
           builder: (context, ref, child) {
             return CustomElevatedButton(
-              text: 'Kayıt Ol',
+              btnTitle: 'Kayıt Ol',
               borderRadius: 50,
               buttonColor: AppColor.orange,
               textColor: AppColor.whiteColor,
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  UserModel user = UserModel(
-                      email: emailController.text,
-                      password: passwordController.text);
+                  UserModel newUser = UserModel(
+                    userName: userNameController.text,
+                    email: emailController.text,
+                    password: passwordController.text,
+                  );
 
                   ref
                       .read(authContreollerProvider)
-                      .signUpWithEmailAndPassword(userModel: user)
+                      .signUpWithEmailAndPassword(userModel: newUser)
                       .then(
                         (value) => Navigator.pop(context),
                       );
@@ -102,39 +109,61 @@ class _SignUpScreenState extends State<SignUpScreen> {
             );
           },
         ),
-        const GoogleBtnViewWidget(),
-        const Spacer(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Hesabınız var mı ?",
-              style: context.textTheme.bodyLarge?.copyWith(
-                color: AppColor.whiteColor,
-              ),
-            ),
-            GestureDetector(
+        Consumer(
+          builder: (context, ref, child) {
+            return GoogleBtnViewWidget(
               onTap: () {
-                Navigator.pop(context);
+                ref.read(authContreollerProvider).signInWithGoogle().then(
+                    (value) =>
+                        Navigator.pushNamed(context, AppRouteNames.home));
               },
-              child: Text(
-                " Giriş Yap",
+            );
+          },
+        ),
+        const Spacer(),
+        Padding(
+          padding: context.paddingVerticalLow,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Hesabınız var mı ?",
                 style: context.textTheme.bodyLarge?.copyWith(
-                  color: AppColor.greenColor,
+                  color: AppColor.whiteColor,
                 ),
               ),
-            ),
-          ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  " Giriş Yap",
+                  style: context.textTheme.bodyLarge?.copyWith(
+                    color: AppColor.greenColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildEmailForm() {
+  Widget _buildFirstNameForm(TextEditingController fristNameController) {
+    return TextFromFieldWidget(
+      hintText: 'Kullanıcı Adı',
+      controller: fristNameController,
+      formPreIcon: Icons.person,
+      textInputType: TextInputType.name,
+    );
+  }
+
+  Widget _buildEmailForm(TextEditingController emailController) {
     return TextFromFieldWidget(
       hintText: 'E-mail',
       controller: emailController,
-      formPreIcon: Icons.person,
+      formPreIcon: Icons.mail_outline,
     );
   }
 

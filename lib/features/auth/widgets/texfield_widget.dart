@@ -10,6 +10,7 @@ class TextFromFieldWidget extends StatelessWidget {
     this.obscureText = false,
     this.formPreIcon,
     this.suffixIcon,
+    this.textInputType
   });
 
   final bool obscureText;
@@ -17,12 +18,14 @@ class TextFromFieldWidget extends StatelessWidget {
   final IconData? formPreIcon;
   final Widget? suffixIcon;
   final TextEditingController? controller;
+  final TextInputType? textInputType;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: context.dynamicHeight(0.01)),
       child: TextFormField(
+        cursorColor: AppColor.whiteColor,
         validator: (value) {
           if (value!.isEmpty) {
             return '$hintText zorunlu alandır.';
@@ -41,25 +44,26 @@ class TextFromFieldWidget extends StatelessWidget {
     Color iconColor = AppColor.lightBlue;
 
     return InputDecoration(
-      border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50), borderSide: BorderSide.none),
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: context.lowValue,
-        vertical: context.dynamicHeight(0.01),
-      ),
-      prefixIcon: Icon(
-        formPreIcon,
-        size: 30,
-      ),
-      prefixIconColor: iconColor,
-      filled: true,
-      fillColor: AppColor.orange,
-      hintText: hintText,
-      hintStyle: const TextStyle(
-        color: AppColor.whiteColor,
-      ),
-      suffixIconColor: iconColor,
-      suffixIcon: suffixIcon,
-    );
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(50),
+            borderSide: BorderSide.none),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: context.lowValue,
+          vertical: context.dynamicHeight(0.01),
+        ),
+        prefixIcon: Icon(
+          formPreIcon,
+          size: 30,
+        ),
+        prefixIconColor: iconColor,
+        filled: true,
+        fillColor: AppColor.orange,
+        hintText: hintText,
+        hintStyle: const TextStyle(
+          color: AppColor.whiteColor,
+        ),
+        suffixIconColor: iconColor,
+        suffixIcon: suffixIcon,
+        errorStyle: const TextStyle(color: Colors.white));
   }
 }

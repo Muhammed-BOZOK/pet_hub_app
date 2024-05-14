@@ -1,11 +1,11 @@
-class Comment {
+class CommentModel {
   String? commentId;
   String? postId;
   String? userId;
   DateTime? timestamp;
   String? content;
 
-  Comment({
+  CommentModel({
     this.commentId,
     this.postId,
     this.userId,
@@ -13,8 +13,8 @@ class Comment {
     this.content,
   });
 
-  factory Comment.fromJson(Map<String, dynamic> json) {
-    return Comment(
+  factory CommentModel.fromJson(Map<String, dynamic> json) {
+    return CommentModel(
       commentId: json['comment_id'],
       postId: json['post_id'],
       userId: json['user_id'],
@@ -24,10 +24,10 @@ class Comment {
   }
 
   Map<String, dynamic> toJson() => {
-    'comment_id': commentId,
-    'post_id': postId,
-    'user_id': userId,
-    'timestamp': timestamp!.toIso8601String(),
-    'content': content,
-  };
+        'comment_id': commentId,
+        'post_id': postId,
+        'user_id': userId,
+        'timestamp': timestamp!.toIso8601String(),
+        'content': content,
+      };
 }

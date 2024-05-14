@@ -5,7 +5,7 @@ import 'package:pet_friend_hub_app/config/items/app_color.dart';
 class CustomElevatedButton extends StatelessWidget {
   const CustomElevatedButton({
     Key? key,
-    required this.text,
+    required this.btnTitle,
     required this.onPressed,
     this.buttonColor = AppColor.lightBlue,
     this.textColor = Colors.black,
@@ -16,7 +16,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.mrgVertical = 5.0,
   }) : super(key: key);
 
-  final String text;
+  final String btnTitle;
   final VoidCallback onPressed;
   final Color buttonColor;
   final Color textColor;
@@ -48,7 +48,7 @@ class CustomElevatedButton extends StatelessWidget {
             vertical: paddingVertical,
             horizontal: paddingHorizontal,
           ),
-          child: Text(text, style: context.textTheme.titleMedium),
+          child: Text(btnTitle, style: context.textTheme.titleMedium),
         ),
       ),
     );

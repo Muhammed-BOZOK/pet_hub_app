@@ -47,7 +47,9 @@ class VetDetail extends StatelessWidget {
                   ],
                 ),
               )),
-          const Spacer(flex: 2,),
+          const Spacer(
+            flex: 2,
+          ),
           Expanded(flex: 6, child: _buildTitle(context, 'Hakkında')),
           Expanded(
             flex: 25,
@@ -58,14 +60,17 @@ class VetDetail extends StatelessWidget {
               maxLines: 4,
             ),
           ),
-          const Spacer(flex: 1,),
+          const Spacer(
+            flex: 1,
+          ),
           Expanded(flex: 6, child: _buildTitle(context, 'Takvim')),
           Expanded(
             flex: 15,
             child: _viewCalender(),
           ),
-          const Spacer(flex: 1,),
-
+          const Spacer(
+            flex: 1,
+          ),
           Expanded(
             flex: 6,
             child: _buildTitle(context, 'Saat'),
@@ -91,8 +96,8 @@ class VetDetail extends StatelessWidget {
             child: SizedBox(
               width: context.width,
               child: CustomElevatedButton(
-                text: 'Randeü Al',
-                borderRadius: 15  ,
+                btnTitle: 'Randeü Al',
+                borderRadius: 15,
                 buttonColor: AppColor.orange,
                 onPressed: () {},
               ),
