@@ -1,4 +1,4 @@
-# pet_friend_hub_app
+# pet_hub_app
 
 A new Flutter project.
 
