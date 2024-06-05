@@ -4,7 +4,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class PostPhotoController {
-  
   Future<File?> pickImageFromGaallery() async {
     final imageFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -23,8 +22,10 @@ class PostPhotoController {
 
   Future<File> _imageCrop(File imageFile) async {
     final CroppedFile? cropedImage = await ImageCropper().cropImage(
-        sourcePath: imageFile.path,
-        aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9));
+      sourcePath: imageFile.path,
+      // aspectRatio: const CropAspectRatio(ratioX: 16, ratioY: 9),
+      uiSettings: [AndroidUiSettings(lockAspectRatio: false)],
+    );
     if (cropedImage == null) throw Exception("Resim kırpılamadı");
     return File(cropedImage.path);
   }

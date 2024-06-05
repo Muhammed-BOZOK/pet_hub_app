@@ -67,6 +67,20 @@ class _SignInScreenState extends State<SignInScreen> {
                     children: [
                       _buildEmailForm(),
                       _buildPasswordForm(),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context, AppRouteNames.resetPassword);
+                          },
+                          child: Text(
+                            'Şifremi unuttum',
+                            style: context.textTheme.titleMedium
+                                ?.copyWith(fontSize: 18),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -91,7 +105,7 @@ class _SignInScreenState extends State<SignInScreen> {
             return CustomElevatedButton(
               btnTitle: 'Giriş Yap',
               borderRadius: 50,
-              buttonColor: AppColor.orange,
+              btnColor: AppColor.orange,
               textColor: AppColor.whiteColor,
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
@@ -102,8 +116,8 @@ class _SignInScreenState extends State<SignInScreen> {
                   ref
                       .read(authContreollerProvider)
                       .signInWithEmailAndPassword(userModel: user)
-                      .then((value) =>
-                          Navigator.pushNamed(context, AppRouteNames.home));
+                      .then((value) => Navigator.pushNamedAndRemoveUntil(
+                          context, AppRouteNames.home, (route) => false));
                 }
               },
             );
@@ -128,7 +142,7 @@ class _SignInScreenState extends State<SignInScreen> {
             children: [
               Text(
                 "Hesabınız yok mu ?",
-                style: context.textTheme.bodyLarge?.copyWith(
+                style: context.textTheme.bodyMedium?.copyWith(
                   color: AppColor.whiteColor,
                 ),
               ),

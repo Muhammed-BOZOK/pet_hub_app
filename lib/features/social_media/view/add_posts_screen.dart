@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
+import 'package:pet_friend_hub_app/constants/color.dart';
 import 'package:pet_friend_hub_app/models/data/post_model.dart';
 import 'package:pet_friend_hub_app/widgets/elevated_button_widget.dart';
 
@@ -28,10 +29,10 @@ class PostsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   AspectRatio(
-                    aspectRatio: 16 / 9,
+                    aspectRatio: 16 / 10,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: scaffoldBGColor,
                         image: DecorationImage(
                           image: FileImage(
                             selectedImage!,
@@ -64,19 +65,23 @@ class PostsScreen extends StatelessWidget {
                   Consumer(
                     builder: (context, ref, child) {
                       return CustomElevatedButton(
+                        btnColor: AppColor.orange,
                         btnTitle: 'Paylaş',
                         onPressed: () {
-                          debugPrint('post submit');
-                          PostModel newPost = PostModel(
-                            description: descriptionController.text == "" ? null : descriptionController.text,
-                            timestamp: DateTime.now(),
-                          );
-                          ref
-                              .read(postControllerProvider)
-                              .setPostToFirestore(newPost, selectedImage!)
-                              .then((value) => Navigator.pop(context));
+                          if (selectedImage != null) {
+                            debugPrint('post submit');
+                            PostModel newPost = PostModel(
+                              description: descriptionController.text == ""
+                                  ? null
+                                  : descriptionController.text,
+                              timestamp: DateTime.now(),
+                            );
+                            ref
+                                .read(postControllerProvider)
+                                .setPostToFirestore(newPost, selectedImage!);
+                            Navigator.pop(context);
+                          }
                         },
-                        buttonColor: AppColor.orange,
                       );
                     },
                   )

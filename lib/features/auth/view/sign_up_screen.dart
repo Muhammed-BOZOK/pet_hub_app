@@ -88,7 +88,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             return CustomElevatedButton(
               btnTitle: 'Kayıt Ol',
               borderRadius: 50,
-              buttonColor: AppColor.orange,
+              btnColor: AppColor.orange,
               textColor: AppColor.whiteColor,
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
@@ -128,7 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             children: [
               Text(
                 "Hesabınız var mı ?",
-                style: context.textTheme.bodyLarge?.copyWith(
+                style: context.textTheme.bodyMedium?.copyWith(
                   color: AppColor.whiteColor,
                 ),
               ),

@@ -4,19 +4,15 @@ import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
 import 'package:pet_friend_hub_app/config/routes/route_name.dart';
 import 'package:pet_friend_hub_app/features/profile/controller/profile_controller.dart';
+import 'package:pet_friend_hub_app/models/data/pet_model.dart';
 import 'package:pet_friend_hub_app/models/data/user_model.dart';
 
-class ProfileScreen extends ConsumerWidget {
-  ProfileScreen({super.key});
-  final double headIconSize = 30;
+import '../../../models/data/post_model.dart';
 
-  final List<String> photo = [
-    'assets/images/kedi.jpg',
-    'assets/images/kedi.jpg',
-    'assets/images/kedi.jpg',
-    'assets/images/kedi.jpg',
-    'assets/images/dog.jpeg',
-  ];
+class ProfileScreen extends ConsumerWidget {
+  const ProfileScreen({super.key});
+
+  final double headIconSize = 30;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -40,68 +36,123 @@ class ProfileScreen extends ConsumerWidget {
   Widget _buildBody(BuildContext context, UserModel user) {
     return SizedBox(
       height: context.height,
-      child: Padding(
-        padding: context.paddingHorizontalDefault,
-        child: Column(
-          children: [
-            Expanded(
-              flex: 25,
-              child: _buildHeader(context, user),
-            ),
-            Expanded(
-              flex: 75,
-              child: _buildConten(context),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  SingleChildScrollView _buildConten(BuildContext context) {
-    return SingleChildScrollView(
       child: Column(
         children: [
-          _buildTitle(context, 'Evcll Hayvanlarım'),
-          Wrap(
-            children: [
-              _buildPetItem(context, 'Dog'),
-              _buildPetItem(context, 'Cat'),
-            ],
+          Expanded(
+            flex: 38,
+            child: _buildHeader(context, user),
           ),
-          _buildTitle(context, 'Fotograf Albümü'),
-          GridView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 8.0, // Dikey aralıklar
-              crossAxisSpacing: 8.0,
-              mainAxisExtent: 150,
-            ),
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return Container(
-                color: Colors.white,
-                height: 50,
-                width: 25,
-                child: Image.asset(
-                  photo[index],
-                  fit: BoxFit.cover,
-                ),
-              );
-            },
+          Expanded(
+            flex: 65,
+            child: _buildConten(context, user),
           )
         ],
       ),
     );
   }
 
-  Widget _buildPetItem(BuildContext context, String itemTitle) {
-    double boxSize = context.dynamicHeight(0.17);
+  Widget _buildConten(BuildContext context, UserModel user) {
+    var posts = user.posts;
+    var pets = user.pets;
+    return SingleChildScrollView(
+      padding: context.paddingHorizontalDefault,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildTitle(context, 'Evcll Hayvanlarım'),
+              IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRouteNames.addPet);
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    size: 25,
+                    color: AppColor.whiteColor,
+                  ))
+            ],
+          ),
+          pets != null
+              ? _viewPetOfUser(context, pets)
+              : _emptyView(
+                  context,
+                  'Henüz Evcil Hayvan Eklemediniz!.',
+                ),
+          _buildTitle(context, 'Fotograf Albümü'),
+          posts != null
+              ? _viewPostOfUser(posts, user.profilePhoto!)
+              : _emptyView(
+                  context,
+                  'Henüz Gönderiniz Yok!',
+                )
+        ],
+      ),
+    );
+  }
+
+  Widget _viewPetOfUser(BuildContext context, List<PetModel> pets) {
     return SizedBox(
-      height: boxSize,
-      width: boxSize * 0.75,
+      height: context.dynamicHeight(.2),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        shrinkWrap: true,
+        itemCount: pets.length,
+        itemBuilder: (context, index) {
+          return _buildPetItem(context, pets[index]);
+        },
+      ),
+    );
+  }
+
+  Widget _viewPostOfUser(List<PostModel> posts, String userProfilPhoto) {
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 5.0, // Dikey aralıklar
+        crossAxisSpacing: 5.0,
+        mainAxisExtent: 150,
+      ),
+      itemCount: posts.length,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              AppRouteNames.detailPost,
+              arguments: {
+                'userProfilPhoto': userProfilPhoto,
+                'post': posts[index],
+              },
+            );
+          },
+          child: AspectRatio(
+            aspectRatio: 1 / 1,
+            child: Container(
+              height: context.dynamicHeight(0.05),
+              width: 25,
+              decoration: BoxDecoration(
+                color: Colors.grey.withOpacity(.1),
+                image: DecorationImage(
+                  image: NetworkImage(posts[index].postImageUrl!),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              // child: Image.network(posts[index].postImageUrl!)
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPetItem(BuildContext context, PetModel pet) {
+    double boxSize = context.dynamicHeight(.17);
+
+    return SizedBox(
+      width: boxSize,
       child: Card(
         color: AppColor.orange.withOpacity(0.5),
         child: Padding(
@@ -110,11 +161,12 @@ class ProfileScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               const CircleAvatar(
-                radius: 30,
+                radius: 25,
               ),
               Text(
-                itemTitle,
-                style: context.textTheme.titleMedium,
+                pet.name ?? 'Error',
+                style: context.textTheme.titleSmall
+                    ?.copyWith(color: AppColor.whiteColor),
               )
             ],
           ),
@@ -124,8 +176,17 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildHeader(BuildContext context, UserModel user) {
-    return Padding(
-      padding: context.paddingVerticalLow,
+    return Container(
+      padding: context.paddingAllLow,
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(25),
+          ),
+          border: Border(
+              bottom: BorderSide(
+            color: AppColor.orange,
+            width: 1,
+          ))),
       child: Column(
         children: [
           Row(
@@ -145,43 +206,44 @@ class ProfileScreen extends ConsumerWidget {
                   )
                 ],
               ),
-              _buildIconBtn(
-                Icons.logout_rounded,
-                () {
-                  debugPrint('Çıkış');
+              Consumer(
+                builder: (context, ref, child) {
+                  return _buildIconBtn(
+                    Icons.logout_rounded,
+                    () {
+                      debugPrint('Çıkış');
+                      ref
+                          .read(profileControllerProvider)
+                          .signOut()
+                          .whenComplete(() => Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              AppRouteNames.signIn,
+                              (route) => false));
+                    },
+                  );
                 },
-              ),
+              )
             ],
           ),
-          Row(
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: NetworkImage(user.profilePhoto!),
+          ),
+          SizedBox(
+            height: context.dynamicHeight(0.03),
+          ),
+          Column(
             children: [
-              Expanded(
-                flex: 3,
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundImage: NetworkImage(user.profilePhoto!),
-                ),
+              _viewText(
+                Alignment.center,
+                user.userName!,
+                context.textTheme.titleLarge,
               ),
-              const SizedBox(
-                width: 10,
+              _viewText(
+                Alignment.center,
+                'Hesap Türü: Kullanıcı',
+                context.textTheme.titleSmall,
               ),
-              Expanded(
-                flex: 9,
-                child: Column(
-                  children: [
-                    _viewText(
-                      Alignment.topLeft,
-                      user.userName!,
-                      context.textTheme.titleLarge,
-                    ),
-                    _viewText(
-                      Alignment.centerRight,
-                      'Hesap Türü: Nromal',
-                      context.textTheme.titleSmall,
-                    ),
-                  ],
-                ),
-              )
             ],
           )
         ],
@@ -222,6 +284,15 @@ class ProfileScreen extends ConsumerWidget {
       child: Text(
         text,
         style: textStyle,
+      ),
+    );
+  }
+
+  Widget _emptyView(BuildContext context, String text) {
+    return Center(
+      child: Text(
+        text,
+        style: context.textTheme.bodyMedium,
       ),
     );
   }

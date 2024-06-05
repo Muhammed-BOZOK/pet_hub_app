@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../profile/view/profile_screen.dart';
 import '../../chat/view/chat_screen.dart';
 import '../../social_media/view/social_media_screen.dart';
-import '../../vet_appointment/view/vet_appointment_screen.dart';
+import '../../vet_and_appointment/view/vet_and_appointment_screen.dart';
 
 class AppBottomBar extends StatefulWidget {
   const AppBottomBar({super.key});
@@ -20,10 +20,10 @@ class _AppBottomBarState extends State<AppBottomBar> {
   int _selectedIndex = 0;
 
   static final List<Widget> _screens = [
-    const SocialMediaScreen(),
+    SocialMediaScreen(),
     ChatScreen(),
     const VetAppointmentScreen(),
-    ProfileScreen(),
+    const ProfileScreen(),
   ];
 
   void _onTap(int index) {

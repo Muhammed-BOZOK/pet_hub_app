@@ -4,7 +4,7 @@ import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import '../../../config/items/app_color.dart';
 import '../../../models/data/post_model.dart';
 
-class PostItemWidget extends StatelessWidget {
+class PostItemWidget extends StatefulWidget {
   const PostItemWidget({
     super.key,
     required this.post,
@@ -16,7 +16,13 @@ class PostItemWidget extends StatelessWidget {
   final Function()? onPressedToAddComment;
   final Function()? onPressedToLike;
 
-  final double iconSize = 35;
+  @override
+  State<PostItemWidget> createState() => _PostItemWidgetState();
+}
+
+class _PostItemWidgetState extends State<PostItemWidget> {
+  final double iconSize = 30;
+
   final Color iconColor = AppColor.lightBlue;
 
   @override
@@ -28,7 +34,7 @@ class PostItemWidget extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         child: Column(children: [
           _itemHeader(context),
-          if (post.description != null) _itemDescription(context),
+          if (widget.post.description != null) _itemDescription(context),
           _itemBody(context),
           _itemBottom(),
         ]),
@@ -40,31 +46,41 @@ class PostItemWidget extends StatelessWidget {
     return Row(
       children: [
         IconButton(
-            onPressed: onPressedToLike,
+            onPressed: widget.onPressedToLike,
             icon: Icon(
               Icons.favorite_border_rounded,
               size: iconSize,
               color: iconColor,
             )),
         IconButton(
-            onPressed: onPressedToAddComment,
+            onPressed: widget.onPressedToAddComment,
             icon: Icon(
-              Icons.chat_bubble_outline_rounded,
+              widget.post.numberOfComment == 0
+                  ? Icons.chat_bubble_outline_rounded
+                  : Icons.chat_outlined,
               size: iconSize,
               color: iconColor,
-            ))
+            )),
+        Text(
+          widget.post.numberOfComment != 0
+              ? '${widget.post.numberOfComment}'
+              : '',
+          style: const TextStyle(
+            fontSize: 20,
+          ),
+        ),
       ],
     );
   }
 
   Padding _itemDescription(BuildContext context) {
-    debugPrint('${post.description}');
+    debugPrint('${widget.post.description}');
     return Padding(
       padding: context.paddingHorizontalLow,
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
-          '${post.description}',
+          '${widget.post.description}',
           maxLines: 3,
           style: context.textTheme.bodyMedium,
         ),
@@ -76,11 +92,11 @@ class PostItemWidget extends StatelessWidget {
     return Padding(
       padding: context.paddingVerticalDefault,
       child: AspectRatio(
-        aspectRatio: 16 / 9,
+        aspectRatio: 1 / 1,
         child: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage(post.postImageUrl!),
+              image: NetworkImage(widget.post.postImageUrl!),
               fit: BoxFit.cover,
             ),
           ),
@@ -91,6 +107,7 @@ class PostItemWidget extends StatelessWidget {
 
   Widget _itemHeader(BuildContext context) {
     Color iconColor = AppColor.lightBlue;
+    String? profilePhotoUrl = widget.post.userPhotoUrl;
     return Padding(
       padding: context.paddingAllLow,
       child: SizedBox(
@@ -101,17 +118,20 @@ class PostItemWidget extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const CircleAvatar(
+                    profilePhotoUrl == null ? const CircleAvatar(
                       child: Icon(
                         Icons.person_2_rounded,
                         color: Colors.black,
                         size: 40,
                       ),
+                    ) 
+                    : CircleAvatar(
+                      backgroundImage: NetworkImage(profilePhotoUrl),
                     ),
                     Padding(
                       padding: context.paddingLeftLow,
                       child: Text(
-                        post.userName ?? 'User Name',
+                        widget.post.userName ?? 'User Name',
                         style: context.textTheme.bodyLarge,
                       ),
                     ),

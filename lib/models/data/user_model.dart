@@ -1,3 +1,6 @@
+import 'pet_model.dart';
+import 'post_model.dart';
+
 class UserModel {
   String? uid;
   String? userName;
@@ -5,17 +8,19 @@ class UserModel {
   String email;
   String? password;
   String? accountType;
-  List<String>? pets;
+  List<PetModel>? pets;
+  List<PostModel>? posts;
 
-  UserModel(
-      {this.uid,
-      this.userName,
-      this.profilePhoto,
-      required this.email,
-      this.password,
-      this.accountType,
-      this.pets
-      });
+  UserModel({
+    this.uid,
+    this.userName,
+    this.profilePhoto,
+    required this.email,
+    this.password,
+    this.accountType,
+    this.pets,
+    this.posts,
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(

@@ -4,13 +4,12 @@ import 'package:pet_friend_hub_app/config/items/app_color.dart';
 
 class ChatScreen extends StatelessWidget {
   ChatScreen({super.key});
-  final List<int> message = [1, 2, 3, 4, 5, 6, 7, 8, 9, 100000000000000000];
-  final String backImage = 'assets/images/chat_bck.jpg';
 
+  final String backImage = 'assets/images/chat_bck.jpg';
+  final List<String>? message = List.empty(growable: true);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       appBar: AppBar(
         title: Text(
           'Asistan Veteriner',
@@ -24,19 +23,20 @@ class ChatScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: context.dynamicWidth(0.05),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Expanded(
-                flex: 95,
-                child: _messageView(context),
-              ),
-              Expanded(flex: 8, child: _buildPostMessage(context))
-            ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: context.dynamicWidth(0.05),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                    height: context.dynamicHeight(.72),
+                    child: _messageView(context)),
+                _buildPostMessage(context)
+              ],
+            ),
           ),
         ),
       ),
@@ -47,15 +47,15 @@ class ChatScreen extends StatelessWidget {
     return Padding(
       padding: context.paddingAllLow,
       child: ListView.builder(
-        itemCount: message.length,
+        itemCount: message?.length,
         itemBuilder: (context, index) {
           bool isMe = true;
-          if (message[index] % 2 == 0) {
+          if (index % 2 == 0) {
             isMe = false;
           }
           return MessageWidget(
             isMe: isMe,
-            message: message[index].toString(),
+            message: message![index].toString(),
           );
         },
       ),

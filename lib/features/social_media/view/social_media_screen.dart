@@ -5,65 +5,86 @@ import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
 import 'package:pet_friend_hub_app/features/social_media/controller/post_photo_controller.dart';
 import 'package:pet_friend_hub_app/features/social_media/controller/posts_controller.dart';
-import 'package:pet_friend_hub_app/features/social_media/view/posts_screen.dart';
-import 'package:pet_friend_hub_app/features/social_media/widgets/post_item_widget.dart';
+
+import '../widgets/bottom_sheet_widget.dart';
+import '../widgets/post_item_widget.dart';
+import 'add_posts_screen.dart';
+import 'package:pet_friend_hub_app/models/data/post_model.dart';
 
 class SocialMediaScreen extends ConsumerWidget {
-  const SocialMediaScreen({super.key});
+  SocialMediaScreen({super.key});
 
   final double iconSize = 35;
   final Color iconColor = AppColor.lightBlue;
+  final TextEditingController commentData = TextEditingController();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: _buildAppBar(context),
-      body: FutureBuilder(
-          future: ref.read(postControllerProvider).getPost(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final posts = snapshot.data;
-              return ListView.builder(
-                itemCount: posts?.length,
-                itemBuilder: (context, index) {
-                  return PostItemWidget(
-                    post: posts![index],
-                    onPressedToAddComment: () {
-                      debugPrint('commen : ${posts[index].postId}');
-                    },
-                  );
-                },
-              );
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              return const Center(child: Text("Error"));
-            }
-          }),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColor.orange,
+        onPressed: () {
+          _selectCameraOrGallery(context);
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        child: Icon(
+          Icons.add_a_photo_outlined,
+          size: iconSize * .9,
+          color: AppColor.whiteColor,
+        ),
+      ),
+      body: _buildBody(ref),
     );
+  }
+
+  FutureBuilder<List<PostModel>> _buildBody(WidgetRef ref) {
+    return FutureBuilder(
+        future: ref.read(postControllerProvider).getPost(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final posts = snapshot.data;
+            return ListView.builder(
+              itemCount: posts?.length,
+              itemBuilder: (context, index) {
+                return PostItemWidget(
+                  post: posts![index],
+                  onPressedToAddComment: () {
+                    debugPrint('comment : ${posts[index].postId}');
+                    _viewBottomSheeet(context, ref, posts[index].postId!);
+                  },
+                );
+              },
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return const Center(child: Text("Error"));
+          }
+        });
+  }
+
+  Future<dynamic> _viewBottomSheeet(
+      BuildContext context, WidgetRef ref, String postId) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        backgroundColor: Colors.black,
+        context: context,
+        builder: (_) {
+          return BottomSheetWidget(postId: postId);
+        });
   }
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-        title: Text(
-          'Sosyal Medya',
-          style: context.textTheme.titleLarge,
-        ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              _viewShowDialog(context);
-            },
-            icon: Icon(
-              Icons.add_box_outlined,
-              color: iconColor,
-              size: iconSize * .9,
-            ),
-          )
-        ]);
+      title: Text(
+        'Sosyal Medya',
+        style: context.textTheme.titleLarge,
+      ),
+    );
   }
 
-  Future<dynamic> _viewShowDialog(BuildContext context) {
+  Future<dynamic> _selectCameraOrGallery(BuildContext context) {
     final textStyle = context.textTheme.bodyMedium;
     return showModalBottomSheet(
         backgroundColor: Colors.black,
@@ -79,15 +100,16 @@ class SocialMediaScreen extends ConsumerWidget {
                   navigator.pop();
                   final selectedImage =
                       await PostPhotoController().pickImageFromGaallery();
-                  navigator.push(MaterialPageRoute(
-                    builder: (context) => PostsScreen(
-                      selectedImage: selectedImage,
-                    ),
-                  ));
+                  if (selectedImage != null) {
+                    navigator.push(MaterialPageRoute(
+                      builder: (context) =>
+                          PostsScreen(selectedImage: selectedImage),
+                    ));
+                  }
                 },
                 leading: const Icon(Icons.photo_outlined),
                 title: Text(
-                  'Fotograf Seç',
+                  'Galeri',
                   style: textStyle,
                 ),
               ),
@@ -108,7 +130,7 @@ class SocialMediaScreen extends ConsumerWidget {
                 },
                 leading: const Icon(Icons.camera_alt_outlined),
                 title: Text(
-                  'Fotograf Çek',
+                  'Kamera',
                   style: textStyle,
                 ),
               )
@@ -116,113 +138,4 @@ class SocialMediaScreen extends ConsumerWidget {
           );
         });
   }
-
-  // SizedBox _buildItem(BuildContext context, PostModel post) {
-  //   return SizedBox(
-  //     width: context.width,
-  //     height: context.veryhighValue6x,
-  //     child: Card(
-  //       color: AppColor.black,
-  //       margin: const EdgeInsets.only(bottom: 10),
-  //       child: Column(
-  //         children: [
-  //           Expanded(
-  //             flex: 20,
-  //             child: _itemHeader(context, post),
-  //           ),
-  //           Expanded(
-  //             flex: 65,
-  //             child: _itemBody(),
-  //           ),
-  //           Expanded(
-  //             flex: 15,
-  //             child: _itemBottom(),
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Row _itemBottom() {
-  //   return Row(
-  //     children: [
-  //       IconButton(
-  //           onPressed: () {},
-  //           icon: Icon(
-  //             Icons.favorite_border_rounded,
-  //             size: iconSize,
-  //             color: iconColor,
-  //           )),
-  //       IconButton(
-  //           onPressed: () {},
-  //           icon: Icon(
-  //             Icons.chat_bubble_outline_rounded,
-  //             size: iconSize,
-  //             color: iconColor,
-  //           ))
-  //     ],
-  //   );
-  // }
-
-  // Widget _itemBody() {
-  //   return AspectRatio(
-  //     aspectRatio: 16 / 9,
-  //     child: Container(
-  //       decoration: const BoxDecoration(
-  //         image: DecorationImage(
-  //           image: AssetImage(
-  //             'assets/images/kedi.jpg',
-  //           ),
-  //           fit: BoxFit.cover,
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _itemHeader(BuildContext context, PostModel post) {
-  //   Color iconColor = AppColor.lightBlue;
-  //   return Padding(
-  //       padding: context.paddingAllLow,
-  //       child: Column(
-  //         children: [
-  //           Row(
-  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //             children: [
-  //               Row(
-  //                 children: [
-  //                   const CircleAvatar(
-  //                     child: Icon(
-  //                       Icons.person_2_rounded,
-  //                       color: Colors.black,
-  //                       size: 40,
-  //                     ),
-  //                   ),
-  //                   Padding(
-  //                     padding: context.paddingLeftLow,
-  //                     child: Text(
-  //                       post.content.toString(),
-  //                       style: context.textTheme.bodyLarge,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //               IconButton(
-  //                 padding: EdgeInsets.zero,
-  //                 onPressed: () {},
-  //                 icon: Icon(
-  //                   Icons.more_vert_rounded,
-  //                   size: 40,
-  //                   color: iconColor,
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //           const Divider(
-  //             height: 1,
-  //           )
-  //         ],
-  //       ));
-  // }
 }

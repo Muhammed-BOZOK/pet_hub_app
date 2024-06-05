@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:pet_friend_hub_app/config/extension/context_extension.dart';
 import 'package:pet_friend_hub_app/config/items/app_color.dart';
+import 'package:pet_friend_hub_app/features/settings/view/updata_profile_photo.dart';
+
+import '../../social_media/controller/post_photo_controller.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -21,6 +24,13 @@ class SettingsScreen extends StatelessWidget {
           children: [
             _buildTitle(
               context,
+              'Profili fotografı güncelle',
+              () {
+                _selectCameraOrGallery(context);
+              },
+            ),
+            _buildTitle(
+              context,
               'Profili Düzenle',
               () {},
             ),
@@ -31,7 +41,6 @@ class SettingsScreen extends StatelessWidget {
               () {},
             ),
             const Spacer(),
-            
           ],
         ),
       ),
@@ -70,5 +79,60 @@ class SettingsScreen extends StatelessWidget {
         iconColor: AppColor.whiteColor,
       ),
     );
+  }
+
+  Future<dynamic> _selectCameraOrGallery(BuildContext context) {
+    final textStyle = context.textTheme.bodyMedium;
+    return showModalBottomSheet(
+        backgroundColor: Colors.black,
+        context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                onTap: () async {
+                  debugPrint('Galeri');
+                  final navigator = Navigator.of(context);
+                  navigator.pop();
+                  final selectedImage =
+                      await PostPhotoController().pickImageFromGaallery();
+                  if (selectedImage != null) {
+                    navigator.push(MaterialPageRoute(
+                      builder: (context) =>
+                          UpdateProfilePhto(selectedImage: selectedImage),
+                    ));
+                  }
+                },
+                leading: const Icon(Icons.photo_outlined),
+                title: Text(
+                  'Galeri',
+                  style: textStyle,
+                ),
+              ),
+              ListTile(
+                onTap: () async {
+                  debugPrint('Kamera');
+                  final navigator = Navigator.of(context);
+                  navigator.pop();
+                  final selectedImage =
+                      await PostPhotoController().pickImageFromCamera();
+                  if (selectedImage != null) {
+                    navigator.push(MaterialPageRoute(
+                      builder: (context) => UpdateProfilePhto(
+                        selectedImage: selectedImage,
+                      ),
+                    ));
+                  }
+                },
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: Text(
+                  'Kamera',
+                  style: textStyle,
+                ),
+              )
+            ],
+          );
+        });
   }
 }

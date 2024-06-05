@@ -15,7 +15,7 @@ class PostsScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(),
         body: AspectRatio(
-          aspectRatio: 16 / 9,
+          aspectRatio: 1 / 1,
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,

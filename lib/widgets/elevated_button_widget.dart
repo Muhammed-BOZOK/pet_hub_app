@@ -7,10 +7,11 @@ class CustomElevatedButton extends StatelessWidget {
     Key? key,
     required this.btnTitle,
     required this.onPressed,
-    this.buttonColor = AppColor.lightBlue,
+    this.titleStyle,
+    this.btnColor = AppColor.lightBlue,
     this.textColor = Colors.black,
     this.borderRadius = 8.0,
-    this.paddingVertical = 10.0,
+    this.paddingVertical = 0,
     this.paddingHorizontal = 15.0,
     this.mrgHorizontal = 5.0,
     this.mrgVertical = 5.0,
@@ -18,13 +19,14 @@ class CustomElevatedButton extends StatelessWidget {
 
   final String btnTitle;
   final VoidCallback onPressed;
-  final Color buttonColor;
+  final Color btnColor;
   final Color textColor;
   final double borderRadius;
   final double paddingVertical;
   final double paddingHorizontal;
   final double mrgVertical;
   final double mrgHorizontal;
+  final TextStyle? titleStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class CustomElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(buttonColor),
+          backgroundColor: MaterialStateProperty.all<Color>(btnColor),
           shape: MaterialStateProperty.all<OutlinedBorder>(
             RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
@@ -48,7 +50,10 @@ class CustomElevatedButton extends StatelessWidget {
             vertical: paddingVertical,
             horizontal: paddingHorizontal,
           ),
-          child: Text(btnTitle, style: context.textTheme.titleMedium),
+          child: Text(
+            btnTitle,
+            style: titleStyle ?? context.textTheme.titleMedium,
+          ),
         ),
       ),
     );
