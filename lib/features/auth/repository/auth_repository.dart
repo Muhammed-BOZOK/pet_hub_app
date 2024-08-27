@@ -21,7 +21,6 @@ class AuthRepository {
     required this.firebaseFirestore,
   });
 
-  /// Kayıt
   Future<void> signInWithEmailAndPassword(
       {required String email, required String password}) async {
     await auth.signInWithEmailAndPassword(
